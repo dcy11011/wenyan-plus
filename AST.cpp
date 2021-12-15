@@ -23,20 +23,20 @@ int Node::row(){
 }
 
 Node* Node::parent(){
-    return p;
+    return m_parent;
 }
 
 void Node::setParent(Node * _parent){
-    p = _parent;
+    m_parent = _parent;
 }
 
 Node* Node::child(int index){
-    if(index>=c.size())return nullptr;
-    return c[index];
+    if(index>=m_childList.size())return nullptr;
+    return m_childList[index];
 }
 void Node::insertChild(Node * _child){
     _child->setParent(this);
-    c.push_back(_child);
+    m_childList.push_back(_child);
 }
 
 std::string Node::name(){
@@ -59,7 +59,7 @@ void Node::printDfs(Node *node, int depth){
     for(int i=0;i<depth;i++)printf("  ");
     node->print();
     puts("");
-    for(auto i : node->c)
+    for(auto i : node->m_childList)
         if(i!=nullptr) printDfs(i, depth+1);
     return;
 }

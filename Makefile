@@ -27,7 +27,7 @@ $(YACCX):
 	./parseyy $(YACC) $(YACCX)
 	rm parseyy
 
-$(TOKENCPP):
+$(TOKENCPP): $(YACCC)
 	g++ parsetoken.cpp -o parsetoken
 	./parsetoken $(YACCH)
 	rm parsetoken

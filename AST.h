@@ -19,7 +19,7 @@ struct TextPosition{
 // for coding convience, all types of token use this class.
 class Node{
     TextPosition m_pos;
-    Node * p;// parent
+    Node * m_parent;// parent
     std::vector<Node*> m_childList;// list of child
     std::string m_name;// name of token
     int m_val;
