@@ -1,0 +1,6 @@
+*.wy
+*.wytmp
+*.tab.c
+*.tab.h
+*.yy.c
+*.yy.h
