@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "lex.yy.h": "c",
+        "*.tcc": "cpp",
+        "bitset": "cpp",
+        "list": "cpp",
+        "fstream": "cpp",
+        "functional": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp"
+    }
+}
