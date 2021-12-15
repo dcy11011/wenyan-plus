@@ -10,8 +10,8 @@
 #include "wenyan.x.tab.h"
 extern YYSTYPE yylval;
 
-int n_line = 0;
-int n_char = 0;
+int n_line = 1;
+int n_char = 1;
 
 TextPosition readtoken(char* str){
    TextPosition ret(n_line, n_char);
@@ -38,7 +38,7 @@ list            {yylval = new Node(TYPE_LIST, readtoken(yytext));return TYPE_LIS
 number          {yylval = new Node(TYPE_NUMBER, readtoken(yytext));return TYPE_NUMBER;}
 string          {yylval = new Node(TYPE_STRING, readtoken(yytext));return TYPE_STRING;}
 print_it        {yylval = new Node(PRINT_IT, readtoken(yytext));return PRINT_IT;}
-\n              {n_line ++; n_char = 0;}
+\n              {n_line ++; n_char = 1;}
 .               {n_char += strlen(yytext);}
 %%
 

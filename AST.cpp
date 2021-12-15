@@ -55,9 +55,27 @@ void Node::setVal(int _val){
     m_val = _val;
 }
 
+void Node::printDfs(Node *node, int depth){
+    for(int i=0;i<depth;i++)printf("  ");
+    node->print();
+    puts("");
+    for(auto i : node->c)
+        if(i!=nullptr) printDfs(i, depth+1);
+    return;
+}
+
+void Node::print(){
+    printf("[%s]",m_name.c_str());
+    if(line()>=0)printf(" line %d, row %d ", line(), row());
+}
+
+void Node::printAll(){
+    printDfs(this, 0);
+}
 void __add_child(Node* father, Node* child){
     father->insertChild(child);
 }
+
 
 
 

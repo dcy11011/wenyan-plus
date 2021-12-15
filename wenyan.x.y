@@ -25,7 +25,7 @@ Node *p, *root;
 %token PRINT_IT
 
 %%
-file : file section{ $$=makeNode("file",$1,$2);} | section { $$=makeNode("file",$1);};
+file : file section{ $$=makeNode("file",$1,$2);root = $$;} | section { $$=makeNode("file",$1);};
 section : function  {$$=makeNode("section",$1);}| sentences  {$$=makeNode("section",$1);};
 sentences : sentence  {$$=makeNode("sentences",$1);}| sentences sentence  {$$=makeNode("sentences",$1,$2);};
 sentence : value  {$$=makeNode("sentence",$1);}| return_sentence  {$$=makeNode("sentence",$1);}| print_sentence {$$=makeNode("sentence",$1);};
@@ -57,6 +57,7 @@ int main()
     while((c=fgetc(fin))!=EOF){
         str.push_back(c);
     }
+    puts("fuck");
     str.push_back(0);
     auto p1 = chinese_converter.convertString(std::string(str.data()));
     FILE * filetmp = fopen("tmp.wytmp","w");
@@ -64,5 +65,6 @@ int main()
     fclose(filetmp);
     yyin = fopen("tmp.wytmp","r");
     yyparse();
+    root->printAll();
     return 0;
 }

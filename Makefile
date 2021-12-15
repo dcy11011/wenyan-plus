@@ -8,6 +8,7 @@ LEXC = lex.yy.c
 YACC = wenyan.y
 YACCX = wenyan.x.y
 YACCC = wenyan.x.tab.c
+YACCH = wenyan.x.tab.h
 
 TOKENCPP = token.cpp
 all: wenyan
@@ -28,8 +29,8 @@ $(YACCX):
 
 $(TOKENCPP):
 	g++ parsetoken.cpp -o parsetoken
-	./parsetoken wenyan.x.tab.h
+	./parsetoken $(YACCH)
 	rm parsetoken
 
 clean:
-	rm $(EXE)  $(YACCC) wenyan.x.tab.h $(LEXC) $(TOKENCPP)
+	rm $(EXE) $(YACCX) $(YACCC) $(YACCH) $(LEXC) $(TOKENCPP)

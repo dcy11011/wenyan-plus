@@ -25,7 +25,7 @@ Node *p, *root;
 %token PRINT_IT
 
 %%
-file : file section{root = $$} | section {};
+file : file section{root = $$;} | section {};
 section : function | sentences ;
 sentences : sentence | sentences sentence ;
 sentence : value | return_sentence | print_sentence;
@@ -64,5 +64,6 @@ int main()
     fclose(filetmp);
     yyin = fopen("tmp.wytmp","r");
     yyparse();
+    root->printAll();
     return 0;
 }
