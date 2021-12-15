@@ -25,7 +25,7 @@ Node *p, *root;
 %token PRINT_IT
 
 %%
-file : file section{$$ = makeNode("file", $1, $2);} | section {$$ = makeNode("file", $1);};
+file : file section{root = $$} | section {};
 section : function | sentences ;
 sentences : sentence | sentences sentence ;
 sentence : value | return_sentence | print_sentence;

@@ -6,7 +6,8 @@ LEX = wenyan.l
 LEXC = lex.yy.c
 
 YACC = wenyan.y
-YACCC = wenyan.tab.c
+YACCX = wenyan.x.y
+YACCC = wenyan.x.tab.c
 
 TOKENCPP = token.cpp
 all: wenyan
@@ -17,13 +18,18 @@ wenyan: $(YACCC) $(TOKENCPP)
 $(LEXC): $(LEX)
 	flex  $(LEX)
 
-$(YACCC): $(LEXC)
-	bison -d $(YACC)
+$(YACCC): $(LEXC) $(YACCX)
+	bison -d $(YACCX)
+
+$(YACCX): 
+	g++ -std=c++11 parseyy.cpp -o parseyy
+	./parseyy $(YACC) $(YACCX)
+	rm parseyy
 
 $(TOKENCPP):
 	g++ parsetoken.cpp -o parsetoken
-	./parsetoken wenyan.tab.h
+	./parsetoken wenyan.x.tab.h
 	rm parsetoken
 
 clean:
-	rm $(EXE)  $(YACCC) wenyan.tab.h $(LEXC) $(TOKENCPP)
+	rm $(EXE)  $(YACCC) wenyan.x.tab.h $(LEXC) $(TOKENCPP)

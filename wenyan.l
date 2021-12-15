@@ -7,7 +7,7 @@
 
 #include "ErrorLog.h"
 #include "AST.h"
-#include "wenyan.tab.h"
+#include "wenyan.x.tab.h"
 extern YYSTYPE yylval;
 
 int n_line = 0;
