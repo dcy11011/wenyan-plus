@@ -105,12 +105,12 @@ char buffer[30];
 //   token use its own class, because we don't have much time for 
 //   coding. if-else is time saving.
 //    
-std::string Node::code_generate(){
+std::string Node::codeGenerate(){
     std::string ret_str = "";
     if(m_name == "func_def"){
         std::string func_name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
         ret_str = std::string("var ")+func_name+" = _ => {};\n"+func_name+" = ";
-        ret_str += child(findChildIndexByTokenName("func_params"))->code_generate();
+        ret_str += child(findChildIndexByTokenName("func_params"))->codeGenerate();
         ret_str += "{\n";
     }
     else if(m_name == "func_param_pack"){
@@ -134,26 +134,26 @@ std::string Node::code_generate(){
         ret_str = name + " ";
         Node * params = child(findChildIndexByTokenName("params"));
         if(params != nullptr){
-            ret_str += params->code_generate();
+            ret_str += params->codeGenerate();
         }
     }
     else if(m_name == "params"){
-        for(auto i : m_child_list) ret_str += "(" + i->code_generate() + ")";
+        for(auto i : m_child_list) ret_str += "(" + i->codeGenerate() + ")";
     }
     else if(m_name == "print_sentence"){
         if(m_child_list.size()){
             ret_str = "console.log(";
-            ret_str += m_child_list[0]->code_generate();
+            ret_str += m_child_list[0]->codeGenerate();
             for(auto i : m_child_list) if(i->name()=="value"){
                 if( i == *m_child_list.begin()) continue;
                 ret_str.push_back(',');ret_str.push_back(' ');
-                ret_str += i->code_generate();
+                ret_str += i->codeGenerate();
             }
             ret_str += ");\n";
         }   
     }
     else if(m_name == "value"){
-        ret_str = child(0)->code_generate();
+        ret_str = child(0)->codeGenerate();
     }
     else if(m_name == "NUMBER"){
         sprintf(buffer, "%lld", m_val);
@@ -163,7 +163,7 @@ std::string Node::code_generate(){
         ret_str = _convert_name(m_name);
     }
     else{
-        for(auto i : m_child_list) ret_str += i->code_generate();
+        for(auto i : m_child_list) ret_str += i->codeGenerate();
     }
     return ret_str;
 }
