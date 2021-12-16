@@ -55,7 +55,7 @@ public:
     void print();// print the information of this node
     void printAll();// print the subtree
 
-    std::string code_gen();//generate target code from this AST
+    std::string codeGenerate();//generate target code from this AST
 };
 
 

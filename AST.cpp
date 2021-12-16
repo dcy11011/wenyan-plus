@@ -87,30 +87,37 @@ std::string& Node::str(){
     return m_str;
 }
 
-std::string __parse_name(const std::string _name){
+std::string _convert_name(const std::string _name){
     std::string ret = "";
     for(auto i : _name)if(isdigit(i)||isalpha(i)||i=='_') ret.push_back(i);
     return ret;
 }
 
-std::stack<std::string> temp_value_stack;
-int temp_value_cnt = 0;
-
+// use for convert int/longlong to string
 char buffer[30];
 
-std::string Node::code_gen(){
+// Generate code from AST
+// note:
+//   this function runs recuresively
+//   each AST node gose into its 'if' code block,
+//   and call its child's code_generate() if needed
+//   I choose do it with if-else instead of class inheritance that each 
+//   token use its own class, because we don't have much time for 
+//   coding. if-else is time saving.
+//    
+std::string Node::code_generate(){
     std::string ret_str = "";
     if(m_name == "func_def"){
-        std::string func_name = __parse_name(child(findChildIndexByTokenName("NAME"))->str());
+        std::string func_name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
         ret_str = std::string("var ")+func_name+" = _ => {};\n"+func_name+" = ";
-        ret_str += child(findChildIndexByTokenName("func_params"))->code_gen();
+        ret_str += child(findChildIndexByTokenName("func_params"))->code_generate();
         ret_str += "{\n";
     }
     else if(m_name == "func_param_pack"){
         int x = 0;
         while((x=findChildIndexByTokenName("name_defs",x))!=-1){
             Node* name_def = child(x);
-            std::string name = __parse_name(name_def->child(name_def->findChildIndexByTokenName("NAME"))->str());
+            std::string name = _convert_name(name_def->child(name_def->findChildIndexByTokenName("NAME"))->str());
             ret_str += name + " => ";
             x++;
         }
@@ -119,44 +126,44 @@ std::string Node::code_gen(){
         ret_str = "};\n";
     }
     else if(m_name == "return_sentence"){
-        std::string name = __parse_name(child(findChildIndexByTokenName("NAME"))->str());
+        std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
         ret_str = "return "+name+";\n";
     }
     else if(m_name == "func_use"){
-        std::string name = __parse_name(child(findChildIndexByTokenName("NAME"))->str());
+        std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
         ret_str = name + " ";
         Node * params = child(findChildIndexByTokenName("params"));
         if(params != nullptr){
-            ret_str += params->code_gen();
+            ret_str += params->code_generate();
         }
     }
     else if(m_name == "params"){
-        for(auto i : m_child_list) ret_str += "(" + i->code_gen() + ")";
+        for(auto i : m_child_list) ret_str += "(" + i->code_generate() + ")";
     }
     else if(m_name == "print_sentence"){
         if(m_child_list.size()){
             ret_str = "console.log(";
-            ret_str += m_child_list[0]->code_gen();
+            ret_str += m_child_list[0]->code_generate();
             for(auto i : m_child_list) if(i->name()=="value"){
                 if( i == *m_child_list.begin()) continue;
                 ret_str.push_back(',');ret_str.push_back(' ');
-                ret_str += i->code_gen();
+                ret_str += i->code_generate();
             }
             ret_str += ");\n";
         }   
     }
     else if(m_name == "value"){
-        ret_str = child(0)->code_gen();
+        ret_str = child(0)->code_generate();
     }
     else if(m_name == "NUMBER"){
         sprintf(buffer, "%lld", m_val);
         ret_str = std::string(buffer);
     }
     else if(m_name == "NAME"){
-        ret_str = __parse_name(m_name);
+        ret_str = _convert_name(m_name);
     }
     else{
-        for(auto i : m_child_list) ret_str += i->code_gen();
+        for(auto i : m_child_list) ret_str += i->code_generate();
     }
     return ret_str;
 }

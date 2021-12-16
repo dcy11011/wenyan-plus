@@ -60,13 +60,16 @@ int main()
     }
     str.push_back(0);
     auto p1 = chinese_converter.convertString(std::string(str.data()));
+    std::cout<<"ascii code:"<<std::endl;
+    std::cout<<p1<<std::endl;
     FILE * filetmp = fopen("tmp.wytmp","w");
     fwrite(p1.c_str(), p1.size(), 1, filetmp);
     fclose(filetmp);
     yyin = fopen("tmp.wytmp","r");
     yyparse();
+    std::cout<<"\nAST:\n";
     root->printAll();
-    std::string js_code = root->code_gen();
+    std::string js_code = root->codeGenerate();
     std::cout<<"code:"<<std::endl<<js_code<<std::endl;
     fwrite(js_code.c_str(), 1, js_code.size(), fout);
     return 0;
