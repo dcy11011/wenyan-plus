@@ -3,6 +3,7 @@
 #include <sstream>
 #include <cstdio>
 #include <vector>
+#include <stack>
 #include <string>
 
 #include "ErrorLog.h"
@@ -19,11 +20,39 @@ TextPosition readtoken(char* str){
    return ret;
 }
 
+long long parseNumberString(const std::string &str){
+	std::stack<long long> sta;
+	for(auto i:str){
+      if(i=='0')continue;
+		if(isdigit(i))sta.push((int)(i-'0'));
+		else if(i=='s'){
+			if(sta.empty()) sta.push(10);
+			else{
+				long long t = sta.top();
+                if(t<=10) sta.pop(), sta.push(t*10);
+			}
+		}
+      char token[4] = {'b','k','w','y'};
+      long long val[4] = {100,1000,10000,100000000};
+      for(int j=0;j<4;j++)if(i==token[j]){
+         long long t =0 ;
+         while(!sta.empty() && sta.top()<val[j]) t+=sta.top(), sta.pop();
+         sta.push(t*val[j]);
+      }
+	}
+   long long ret = 0;
+   while(!sta.empty()){
+      ret += sta.top();
+      sta.pop();
+   }
+   return ret;
+}
+
 %}
 
 %%
-[0-9][0-9bkwy\s]*(.[0-9\s]+)? {yylval = new Node(NUMBER, readtoken(yytext));return NUMBER;}
-$name_[0-9]*    {yylval = new Node(NAME, readtoken(yytext));return NAME;}
+[0-9][0-9bskwy\s]*(.[0-9\s]+)? {yylval = new Node(NUMBER, readtoken(yytext)); yylval->setVal(parseNumberString(yytext)); return NUMBER;}
+$name_[0-9]*    {yylval = new Node(NAME, readtoken(yytext)); yylval->setStr(yytext); return NAME;}
 function        {yylval = new Node(FUNCTION, readtoken(yytext));return FUNCTION;}
 func_begin      {yylval = new Node(FUNC_BEGIN, readtoken(yytext));return FUNC_BEGIN;}
 func_end        {yylval = new Node(FUNC_END, readtoken(yytext));return FUNC_END;}

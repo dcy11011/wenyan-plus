@@ -7,11 +7,11 @@ using namespace std;
 char buf[1024], name[1024];
 
 int main(int argc, char ** argv){
-    char *sfilename = argv[1], *tfilename = nullptr;
+    string sfilename = argv[1], tfilename = "";
     if(argc==3)tfilename = argv[2];
-    FILE *fin  = fopen(sfilename, "r");
-    if(tfilename == nullptr) tfilename = "wenyan.x.y";
-    FILE *fout = fopen(tfilename, "w");
+    FILE *fin  = fopen(sfilename.c_str(), "r");
+    if(tfilename == "") tfilename = "wenyan.x.y";
+    FILE *fout = fopen(tfilename.c_str(), "w");
     
     char c,last=' ';
     while((c=fgetc(fin))!=EOF){

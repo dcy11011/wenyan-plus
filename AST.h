@@ -4,9 +4,14 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
+#include <stack>
 #include <vector>
 
 #define YYSTYPE Node*
+
+// Save temp values in code
+extern std::stack<std::string> temp_value_stack;
+extern int temp_value_cnt;
 
 // Class for record token position in source file
 struct TextPosition{
@@ -20,10 +25,11 @@ struct TextPosition{
 class Node{
     TextPosition m_pos;
     Node * m_parent;// parent
-    std::vector<Node*> m_childList;// list of child
+    std::vector<Node*> m_child_list;// list of child
     std::string m_name;// name of token
-    int m_val;
+    long long m_val;
     int m_type;
+    std::string m_str;
 protected:
     void printDfs(Node * node, int depth); // print this node and all its children recursively
 
@@ -36,15 +42,20 @@ public:
     Node* parent();
     void setParent(Node *);
     Node* child(int index);
+    int findChildIndexByTokenName(const std::string name, int start_index = 0);
     void insertChild(Node *);
 
     std::string name();
     void setName(std::string _name);
-    int val();
-    void setVal(int _val);
+    long long val();
+    void setVal(long long _val);
+    std::string& str();
+    void setStr(const std::string &_str);
 
     void print();// print the information of this node
     void printAll();// print the subtree
+
+    std::string code_gen();//generate target code from this AST
 };
 
 

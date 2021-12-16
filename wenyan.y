@@ -28,18 +28,18 @@ Node *p, *root;
 file : file section{root = $$;} | section {};
 section : function | sentences ;
 sentences : sentence | sentences sentence ;
-sentence : value | return_sentence | print_sentence;
-value : function_use ;
-function_use : USE_FUNC NAME USE_TO params ;
+sentence : return_sentence | print_sentence;
+value : func_use ;
+func_use : USE_FUNC NAME USE_TO params ;
 return_sentence : RETURN NAME ;
-print_sentence : sentence PRINT_IT ;
+print_sentence : value PRINT_IT ;
 params : params NAME | params NUMBER | NAME | NUMBER ;
-function : function_def sentences function_end ;
-function_def : DEF FUNCTION NAMED_AS NAME function_params FUNC_BEGIN ;
-function_params : FUNC_PARAM func_param_packs ;
+function : func_def sentences func_end ;
+func_def : DEF FUNCTION NAMED_AS NAME func_params FUNC_BEGIN ;
+func_params : FUNC_PARAM func_param_packs ;
 func_param_packs : func_param_packs func_param_pack | func_param_pack ;
 func_param_pack : NUMBER type name_defs ;
-function_end : THIS_IS NAME FUNC_END ;
+func_end : THIS_IS NAME FUNC_END ;
 type : TYPE_NUMBER | TYPE_STRING | TYPE_LIST ;
 name_defs : name_defs NAMED_AS NAME | NAMED_AS NAME ;
 
@@ -52,6 +52,7 @@ int main()
     ChineseConverter chinese_converter;
     chinese_converter.loadConfig("parse.config");
     FILE *fin = fopen("test.wy","r");
+    FILE *fout= fopen("test.js","w");
     char c;
     std::vector<char> str;
     while((c=fgetc(fin))!=EOF){
@@ -65,5 +66,8 @@ int main()
     yyin = fopen("tmp.wytmp","r");
     yyparse();
     root->printAll();
+    std::string js_code = root->code_gen();
+    std::cout<<"code:"<<std::endl<<js_code<<std::endl;
+    fwrite(js_code.c_str(), 1, js_code.size(), fout);
     return 0;
 }
