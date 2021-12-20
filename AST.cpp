@@ -134,8 +134,7 @@ std::string Node::codeGenerate(){
         ret_str = "};\n";
     }
     else if(m_name == "return_sentence"){
-        std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
-        ret_str = "return "+name+";\n";
+        ret_str = "return "+child(1)->codeGenerate()+";\n";
     }
     else if(m_name == "func_use"){
         std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());

@@ -10,7 +10,7 @@
 
 int yyerror(const std::string &msg)
 {
-    wyLog(log_error)<<msg;
+    wyLog(log_error)<<msg<<" "<<yytext;
 }
 extern std::string token_name[2048];
 
@@ -37,7 +37,7 @@ logic_statement : value logic_operator value ;
 logic_operator : LOGIC_EQUAL | LOGIC_LESS | LOGIC_GREATER ;
 func_use : USE_FUNC NAME USE_TO params ;
 control_sentence : return_sentence | BREAK ;
-return_sentence : RETURN NAME ;
+return_sentence : RETURN NAME | RETURN NUMBER;
 print_sentence : value PRINT_IT | PRINT value;
 function_sentence : func_use;
 loop_sentence : loop_statment sentences END ;
