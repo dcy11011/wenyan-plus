@@ -187,6 +187,15 @@ std::string Node::codeGenerate(){
     else if(m_name == "NAME"){
         ret_str = _convert_name(m_str);
     }
+    else if(m_name == "LOGIC_EQUAL"){
+        ret_str = "==";
+    }
+    else if(m_name == "LOGIC_LESS"){
+        ret_str = "<";
+    }
+    else if(m_name == "LOGIC_GREATER"){
+        ret_str = ">";
+    }
     else{
         for(auto i : m_child_list) ret_str += i->codeGenerate();
     }

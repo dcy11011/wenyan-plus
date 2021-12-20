@@ -73,6 +73,9 @@ while_true      {yylval = new Node(WHILE_TRUE, readtoken(yytext)); return WHILE_
 times           {yylval = new Node(TIMES, readtoken(yytext)); return TIMES;}
 end             {yylval = new Node(END, readtoken(yytext)); return END;}
 break           {yylval = new Node(BREAK, readtoken(yytext)); return BREAK;}
+==              {yylval = new Node(LOGIC_EQUAL, readtoken(yytext)); return LOGIC_EQUAL;}
+\>              {yylval = new Node(LOGIC_GREATER, readtoken(yytext)); return LOGIC_GREATER;}
+\<              {yylval = new Node(LOGIC_LESS, readtoken(yytext)); return LOGIC_LESS;}
 \n              {n_line ++; n_char = 1;}
 .               {n_char += strlen(yytext);}
 %%

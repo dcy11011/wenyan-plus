@@ -24,13 +24,16 @@ Node *p, *root;
 %token TYPE_LIST TYPE_NUMBER TYPE_STRING
 %token PRINT_IT PRINT
 %token WHILE_TRUE DO TIMES END BREAK
+%token LOGIC_EQUAL LOGIC_LESS LOGIC_GREATER
 
 %%
 file : file section{root = $$;} | section {};
 section : function | sentences ;
 sentences : sentence | sentences sentence ;
 sentence : control_sentence | print_sentence | function_sentence | loop_sentence;
-value : func_use | NAME | NUMBER;
+value : func_use | NAME | NUMBER | logic_statement;
+logic_statement : value logic_operator value ;
+logic_operator : LOGIC_EQUAL | LOGIC_LESS | LOGIC_GREATER ;
 func_use : USE_FUNC NAME USE_TO params ;
 control_sentence : return_sentence | BREAK ;
 return_sentence : RETURN NAME ;
