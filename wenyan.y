@@ -22,17 +22,23 @@ Node *p, *root;
 %token FUNCTION  FUNC_BEGIN FUNC_END FUNC_PARAM USE_FUNC USE_TO RETURN
 %token THIS_IS DEF NAMED_AS
 %token TYPE_LIST TYPE_NUMBER TYPE_STRING
-%token PRINT_IT
+%token PRINT_IT PRINT
+%token WHILE_TRUE DO TIMES END
 
 %%
 file : file section{root = $$;} | section {};
 section : function | sentences ;
 sentences : sentence | sentences sentence ;
-sentence : return_sentence | print_sentence;
-value : func_use ;
+sentence : return_sentence | print_sentence | function_sentence | loop_sentence;
+value : func_use | NAME | NUMBER;
 func_use : USE_FUNC NAME USE_TO params ;
 return_sentence : RETURN NAME ;
-print_sentence : value PRINT_IT ;
+print_sentence : value PRINT_IT | PRINT value;
+function_sentence : func_use;
+loop_sentence : loop_statment sentences END ;
+loop_statment : while_true_loop | do_times_loop;
+while_true_loop : WHILE_TRUE ;
+do_times_loop : DO NAME TIMES | DO value TIMES ;
 params : params NAME | params NUMBER | NAME | NUMBER ;
 function : func_def sentences func_end ;
 func_def : DEF FUNCTION NAMED_AS NAME func_params FUNC_BEGIN ;

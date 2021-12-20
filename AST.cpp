@@ -1,5 +1,6 @@
 #include "AST.h"
 #include "token.h"
+#include <cstdlib>
 
 Node::Node(int _type, const TextPosition & _pos):
     m_type(_type),
@@ -96,6 +97,13 @@ std::string _convert_name(const std::string _name){
 // use for convert int/longlong to string
 char buffer[30];
 
+// Use this to get a temperaory new variable's name
+int tmp_var_cnt = 0;
+std::string getTempVariableName(){
+    tmp_var_cnt ++;
+    return std::string("temp_") + std::to_string(tmp_var_cnt);
+}
+
 // Generate code from AST
 // note:
 //   this function runs recuresively
@@ -143,24 +151,38 @@ std::string Node::codeGenerate(){
     else if(m_name == "print_sentence"){
         if(m_child_list.size()){
             ret_str = "console.log(";
-            ret_str += m_child_list[0]->codeGenerate();
+            std::string temp_str = "";
             for(auto i : m_child_list) if(i->name()=="value"){
-                if( i == *m_child_list.begin()) continue;
-                ret_str.push_back(',');ret_str.push_back(' ');
-                ret_str += i->codeGenerate();
+                temp_str += i->codeGenerate();
+                temp_str.push_back(',');
             }
-            ret_str += ");\n";
+            temp_str.pop_back();
+            ret_str += temp_str + ");\n";
         }   
+    }
+    else if(m_name == "loop_sentence"){
+        ret_str =  child(findChildIndexByTokenName("loop_statment"))->codeGenerate();
+        ret_str += "{\n";
+        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate();
+        ret_str += "}\n";
     }
     else if(m_name == "value"){
         ret_str = child(0)->codeGenerate();
+    }
+    else if(m_name == "do_times_loop"){
+        auto loop_times = getTempVariableName(), loop_temp = getTempVariableName();
+        ret_str = std::string("var ") + loop_times + " = " + child(1)->codeGenerate() + ";\n";// child[1] is loop time (value or NAME or ...)
+        ret_str += "for(var " + loop_temp + " = 0; " + loop_temp + " < " + loop_times + "; " + loop_temp + "++)";
+    }
+    else if(m_name == "WHILE_TRUE"){
+        ret_str = "while(true)";
     }
     else if(m_name == "NUMBER"){
         sprintf(buffer, "%lld", m_val);
         ret_str = std::string(buffer);
     }
     else if(m_name == "NAME"){
-        ret_str = _convert_name(m_name);
+        ret_str = _convert_name(m_str);
     }
     else{
         for(auto i : m_child_list) ret_str += i->codeGenerate();

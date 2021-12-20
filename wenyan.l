@@ -67,6 +67,11 @@ list            {yylval = new Node(TYPE_LIST, readtoken(yytext));return TYPE_LIS
 number          {yylval = new Node(TYPE_NUMBER, readtoken(yytext));return TYPE_NUMBER;}
 string          {yylval = new Node(TYPE_STRING, readtoken(yytext));return TYPE_STRING;}
 print_it        {yylval = new Node(PRINT_IT, readtoken(yytext));return PRINT_IT;}
+print           {yylval = new Node(PRINT, readtoken(yytext));return PRINT;}
+do              {yylval = new Node(DO, readtoken(yytext)); return DO;}
+while_true      {yylval = new Node(WHILE_TRUE, readtoken(yytext)); return WHILE_TRUE;}
+times           {yylval = new Node(TIMES, readtoken(yytext)); return TIMES;}
+end             {yylval = new Node(END, readtoken(yytext)); return END;}
 \n              {n_line ++; n_char = 1;}
 .               {n_char += strlen(yytext);}
 %%
