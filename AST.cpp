@@ -177,6 +177,9 @@ std::string Node::codeGenerate(){
     else if(m_name == "WHILE_TRUE"){
         ret_str = "while(true)";
     }
+    else if(m_name == "BREAK"){
+        ret_str = "break;\n";
+    }
     else if(m_name == "NUMBER"){
         sprintf(buffer, "%lld", m_val);
         ret_str = std::string(buffer);

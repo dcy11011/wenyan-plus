@@ -72,6 +72,7 @@ do              {yylval = new Node(DO, readtoken(yytext)); return DO;}
 while_true      {yylval = new Node(WHILE_TRUE, readtoken(yytext)); return WHILE_TRUE;}
 times           {yylval = new Node(TIMES, readtoken(yytext)); return TIMES;}
 end             {yylval = new Node(END, readtoken(yytext)); return END;}
+break           {yylval = new Node(BREAK, readtoken(yytext)); return BREAK;}
 \n              {n_line ++; n_char = 1;}
 .               {n_char += strlen(yytext);}
 %%

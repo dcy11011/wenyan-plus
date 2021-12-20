@@ -23,15 +23,16 @@ Node *p, *root;
 %token THIS_IS DEF NAMED_AS
 %token TYPE_LIST TYPE_NUMBER TYPE_STRING
 %token PRINT_IT PRINT
-%token WHILE_TRUE DO TIMES END
+%token WHILE_TRUE DO TIMES END BREAK
 
 %%
 file : file section{root = $$;} | section {};
 section : function | sentences ;
 sentences : sentence | sentences sentence ;
-sentence : return_sentence | print_sentence | function_sentence | loop_sentence;
+sentence : control_sentence | print_sentence | function_sentence | loop_sentence;
 value : func_use | NAME | NUMBER;
 func_use : USE_FUNC NAME USE_TO params ;
+control_sentence : return_sentence | BREAK ;
 return_sentence : RETURN NAME ;
 print_sentence : value PRINT_IT | PRINT value;
 function_sentence : func_use;

@@ -1,6 +1,7 @@
 def function named_as $name_0 func_param 1 number named_as $name_1 func_begin 
 	 do  $name_1 times 
 		 print  $name_1 
+		 break 
 	 end 
  this_is  $name_0 func_end 
 
