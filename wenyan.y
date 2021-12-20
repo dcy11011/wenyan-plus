@@ -25,12 +25,13 @@ Node *p, *root;
 %token PRINT_IT PRINT
 %token WHILE_TRUE DO TIMES END BREAK
 %token LOGIC_EQUAL LOGIC_LESS LOGIC_GREATER
+%token IF_BEGIN IF_END IF_STAT
 
 %%
 file : file section{root = $$;} | section {};
 section : function | sentences ;
 sentences : sentence | sentences sentence ;
-sentence : control_sentence | print_sentence | function_sentence | loop_sentence;
+sentence : control_sentence | print_sentence | function_sentence | loop_sentence | if_sentence;
 value : func_use | NAME | NUMBER | logic_statement;
 logic_statement : value logic_operator value ;
 logic_operator : LOGIC_EQUAL | LOGIC_LESS | LOGIC_GREATER ;
@@ -52,6 +53,8 @@ func_param_pack : NUMBER type name_defs ;
 func_end : THIS_IS NAME FUNC_END ;
 type : TYPE_NUMBER | TYPE_STRING | TYPE_LIST ;
 name_defs : name_defs NAMED_AS NAME | NAMED_AS NAME ;
+if_sentence : if_statment sentences IF_END ;
+if_statment : IF_BEGIN logic_statement IF_STAT ;
 
 %%
  

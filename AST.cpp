@@ -196,6 +196,19 @@ std::string Node::codeGenerate(){
     else if(m_name == "LOGIC_GREATER"){
         ret_str = ">";
     }
+    else if(m_name == "if_sentence"){
+        ret_str =  child(findChildIndexByTokenName("if_statment"))->codeGenerate();
+        ret_str += "{\n";
+        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate();
+        ret_str += "}\n";
+    }
+    else if(m_name == "IF_BEGIN"){
+        //
+        ret_str = "if (";
+    }
+    else if(m_name == "IF_STAT"){
+        ret_str = ")\n";
+    }
     else{
         for(auto i : m_child_list) ret_str += i->codeGenerate();
     }
