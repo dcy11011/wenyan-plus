@@ -99,11 +99,17 @@ char buffer[30];
 
 // Use this to get a temperaory new variable's name
 int tmp_var_cnt = 0;
-std::string getTempVariableName(){
-    tmp_var_cnt ++;
+std::string getTempVariableName(int no_new = 0){
+    if (!no_new) tmp_var_cnt ++;
     return std::string("temp_") + std::to_string(tmp_var_cnt);
 }
 
+std::string Node::indentGenerate(int indent, int indented) {
+    if (indented) return "";
+    std::string s;
+    while (indent-- > 0) s += "  ";
+    return s;
+}
 // Generate code from AST
 // note:
 //   this function runs recuresively
@@ -113,105 +119,126 @@ std::string getTempVariableName(){
 //   token use its own class, because we don't have much time for 
 //   coding. if-else is time saving.
 //    
-std::string Node::codeGenerate(){
+std::string Node::codeGenerate(int indent, int indented) {
     std::string ret_str = "";
+    std::string indent_str = indentGenerate(indent, indented);
     if(m_name == "func_def"){
         std::string func_name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
-        ret_str = std::string("var ")+func_name+" = _ => {};\n"+func_name+" = ";
-        ret_str += child(findChildIndexByTokenName("func_params"))->codeGenerate();
-        ret_str += "{\n";
+        ret_str += indent_str + "var " + func_name + " = _ => {};\n";
+        ret_str += indent_str + func_name +" = ";
+        ret_str += child(findChildIndexByTokenName("func_params"))->codeGenerate(indent, 1);
+        ret_str += " {\n";
     }
     else if(m_name == "func_param_pack"){
         int x = 0;
-        while((x=findChildIndexByTokenName("name_defs",x))!=-1){
-            Node* name_def = child(x);
-            std::string name = _convert_name(name_def->child(name_def->findChildIndexByTokenName("NAME"))->str());
-            ret_str += name + " => ";
-            x++;
+        if ((x=findChildIndexByTokenName("name_defs",x)) != -1){
+            Node *name_def = child(x);
+            ret_str = name_def->codeGenerate(indent, indented);
         }
     }
+    else if(m_name == "name_def"){
+        std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
+        ret_str += name + " => ";
+    }
     else if(m_name == "func_end"){
-        ret_str = "};\n";
+        ret_str += indent_str + "};\n";
+    }
+    else if(m_name == "RETURN_IT") {
+        ret_str += indent_str + "return " + getTempVariableName(1) + ";\n";
     }
     else if(m_name == "return_sentence"){
-        ret_str = "return "+child(1)->codeGenerate()+";\n";
+        ret_str += indent_str + "return " + child(1)->codeGenerate(indent, 1) + ";\n";
+    }
+    else if(m_name == "function_sentence"){
+        ret_str += indent_str + "var " + getTempVariableName(1) + " = ";
+        for(auto i : m_child_list) ret_str += i->codeGenerate(indent, 1);
+        ret_str += ";\n";
     }
     else if(m_name == "func_use"){
         std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
-        ret_str = name + " ";
+        ret_str += indent_str + name + " ";
         Node * params = child(findChildIndexByTokenName("params"));
         if(params != nullptr){
-            ret_str += params->codeGenerate();
+            ret_str += params->codeGenerate(indent, 1);
         }
     }
     else if(m_name == "USE_TO"){
     }
     else if(m_name == "param"){
-        for(auto i : m_child_list) ret_str += "(" + i->codeGenerate() + ")";
+        for(auto i : m_child_list) ret_str += "(" + i->codeGenerate(indent, 1) + ")";
     }
-    else if(m_name == "print_sentence"){
-        if(m_child_list.size()){
-            ret_str = "console.log(";
+    else if(m_name == "PRINT_IT") {
+        ret_str += indent_str + "console.log(" + getTempVariableName(1) + ");\n";
+    }
+    else if(m_name == "print_sentence") {
+        if(m_child_list.size()) {
+            ret_str += indent_str + "console.log(";
             std::string temp_str = "";
-            for(auto i : m_child_list) if(i->name()=="value"||i->name()=="expression"){
-                temp_str += i->codeGenerate();
-                temp_str.push_back(',');
-            }
+            for(auto i : m_child_list)
+                if (i->name()=="value" || i->name()=="expression") {
+                    temp_str += i->codeGenerate(indent, 1);
+                    temp_str.push_back(',');
+                }
             temp_str.pop_back();
             ret_str += temp_str + ");\n";
         }   
     }
     else if(m_name == "loop_sentence"){
-        ret_str =  child(findChildIndexByTokenName("loop_statment"))->codeGenerate();
-        ret_str += "{\n";
-        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate();
-        ret_str += "}\n";
+        ret_str += child(findChildIndexByTokenName("loop_statment"))->codeGenerate(indent, indented);
+        ret_str += indent_str + "{\n";
+        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate(indent, 0);
+        ret_str += indent_str + "}\n";
     }
     else if(m_name == "value"){
-        ret_str = child(0)->codeGenerate();
+        ret_str = indent_str + child(0)->codeGenerate(indent, 1);
     }
     else if(m_name == "do_times_loop"){
         auto loop_times = getTempVariableName(), loop_temp = getTempVariableName();
-        ret_str = std::string("var ") + loop_times + " = " + child(1)->codeGenerate() + ";\n";// child[1] is loop time (value or NAME or ...)
-        ret_str += "for(var " + loop_temp + " = 0; " + loop_temp + " < " + loop_times + "; " + loop_temp + "++)";
+        ret_str += indent_str + "var " + loop_times + " = " + child(1)->codeGenerate(indent, 1) + ";\n";// child[1] is loop time (value or NAME or ...)
+        ret_str += indent_str + "for(var " + loop_temp + " = 0; " + loop_temp + " < " + loop_times + "; " + loop_temp + "++)";
     }
     else if(m_name == "WHILE_TRUE"){
-        ret_str = "while(true)";
+        ret_str += indent_str + "while(true)";
     }
     else if(m_name == "BREAK"){
-        ret_str = "break;\n";
+        ret_str += indent_str + "break;\n";
     }
     else if(m_name == "NUMBER"){
         sprintf(buffer, "%lld", m_val);
-        ret_str = std::string(buffer);
+        ret_str += indent_str + std::string(buffer);
     }
     else if(m_name == "NAME"){
-        ret_str = _convert_name(m_str);
+        ret_str += indent_str + _convert_name(m_str);
     }
     else if(m_name == "LOGIC_EQUAL"){
-        ret_str = "==";
+        ret_str += indent_str + "==";
     }
     else if(m_name == "LOGIC_LESS"){
-        ret_str = "<";
+        ret_str += indent_str + "<";
     }
     else if(m_name == "LOGIC_GREATER"){
-        ret_str = ">";
+        ret_str += indent_str + ">";
     }
     else if(m_name == "if_sentence"){
-        ret_str =  child(findChildIndexByTokenName("if_statment"))->codeGenerate();
-        ret_str += "{\n";
-        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate();
-        ret_str += "}\n";
+        ret_str += indent_str + child(findChildIndexByTokenName("if_statment"))->codeGenerate(indent, 1);
+        ret_str += indent_str + "{\n";
+        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate(indent, 0);
+        ret_str += indent_str + "}\n";
     }
     else if(m_name == "IF_BEGIN"){
         //
-        ret_str = "if (";
+        ret_str += indent_str + "if (";
     }
     else if(m_name == "IF_STAT"){
-        ret_str = ")\n";
+        ret_str += indent_str + ")\n";
+    }
+    else if (m_name == "sentences") {
+        if (m_parent && m_parent->m_name != m_name) indent++;
+        for(auto i : m_child_list) ret_str += i->codeGenerate(indent, 0);
     }
     else{
-        for(auto i : m_child_list) ret_str += i->codeGenerate();
+        for(auto i : m_child_list) ret_str += i->codeGenerate(indent, indented);
+        // ret_str = "<" + m_name + ret_str + ">";
     }
     return ret_str;
 }

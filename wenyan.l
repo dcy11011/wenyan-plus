@@ -57,6 +57,7 @@ function        {yylval = new Node(FUNCTION, readtoken(yytext));return FUNCTION;
 func_begin      {yylval = new Node(FUNC_BEGIN, readtoken(yytext));return FUNC_BEGIN;}
 func_end        {yylval = new Node(FUNC_END, readtoken(yytext));return FUNC_END;}
 func_param      {yylval = new Node(FUNC_PARAM, readtoken(yytext));return FUNC_PARAM;}
+return_it       {yylval = new Node(RETURN_IT, readtoken(yytext));return RETURN_IT;}
 return          {yylval = new Node(RETURN, readtoken(yytext));return RETURN;}
 use_func        {yylval = new Node(USE_FUNC, readtoken(yytext));return USE_FUNC;}
 use_to          {yylval = new Node(USE_TO, readtoken(yytext));return USE_TO;}
@@ -81,6 +82,8 @@ break           {yylval = new Node(BREAK, readtoken(yytext)); return BREAK;}
 if              {yylval = new Node(IF_BEGIN, readtoken(yytext)); return IF_BEGIN;}
 end_stat        {yylval = new Node(IF_STAT, readtoken(yytext)); return IF_STAT;}
 end_if          {yylval = new Node(IF_END, readtoken(yytext)); return IF_END;}
+get             {yylval = new Node(GET, readtoken(yytext)); return GET;}
+it              {yylval = new Node(IT, readtoken(yytext)); return IT;}
 %%
 
 int yywrap() 

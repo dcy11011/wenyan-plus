@@ -1,4 +1,4 @@
-def function named_as $name_0 func_param 1 number named_as $name_1 func_begin 
+def function named_as $name_0 func_param 必先得 1 number named_as $name_1 
 	 do  $name_1 times 
 		 print  $name_1 == 5 
 		 if  $name_1 == 0 end_stat return 0 end_if 
@@ -7,3 +7,8 @@ def function named_as $name_0 func_param 1 number named_as $name_1 func_begin
  this_is  $name_0 func_end 
 
  use_func  $name_0 use_to 1 print_it 
+
+ def function named_as $name_2 func_param 必先得 2 number named_as  $name_1 named_as $name_3 return  $name_1 this_is  $name_2 func_end 
+ def function named_as $name_4 func_param 必先得 2 number named_as  $name_1 named_as  $name_3 return  $name_3 this_is  $name_4 func_end 
+
+ def function named_as $name_5 func_param 必先得 1 number named_as  $name_1 use_func  $name_1 use_to  $name_4 use_to  $name_2 return_it this_is  $name_5 func_end 

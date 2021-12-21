@@ -20,28 +20,33 @@ Node *p, *root;
 %}
 
 %token NUMBER NAME
-%token FUNCTION  FUNC_BEGIN FUNC_END FUNC_PARAM USE_FUNC USE_TO RETURN
+%token FUNCTION  FUNC_BEGIN FUNC_END FUNC_PARAM USE_FUNC USE_TO RETURN RETURN_IT
 %token THIS_IS DEF NAMED_AS
 %token TYPE_LIST TYPE_NUMBER TYPE_STRING
 %token PRINT_IT PRINT
 %token WHILE_TRUE DO TIMES END BREAK
 %token LOGIC_EQUAL LOGIC_LESS LOGIC_GREATER
 %token IF_BEGIN IF_END IF_STAT
+%token GET IT
 
 %%
 file : sections {root = $$;};
 sections: section | sections section;
 section : function | sentence ;
 sentences : sentence | sentences sentence ;
-sentence : control_sentence | print_sentence | function_sentence | loop_sentence | if_sentence;
+sentence : control_sentence | print_sentence | do_it_sentence | function_sentence
+         | loop_sentence | if_sentence | get_sentence
+         | index_sentence;
 value : func_use | NAME | NUMBER ;
-expression: value | logic_statement ;
+valuei : IT | value;
+expression: valuei | logic_statement ;
 logic_statement : value logic_operator expression ;
 logic_operator : LOGIC_EQUAL | LOGIC_LESS | LOGIC_GREATER ;
 func_use : USE_FUNC NAME params ;
 control_sentence : return_sentence | BREAK ;
+do_it_sentence : PRINT_IT | RETURN_IT;
 return_sentence : RETURN NAME | RETURN NUMBER;
-print_sentence : expression PRINT_IT | PRINT expression;
+print_sentence : PRINT expression;
 function_sentence : func_use;
 loop_sentence : loop_statment sentences END ;
 loop_statment : while_true_loop | do_times_loop;
@@ -50,16 +55,18 @@ do_times_loop : DO value TIMES ;
 param : NAME | NUMBER ;
 params : params USE_TO param | USE_TO param ;
 function : func_def sentences func_end ;
-func_def : DEF FUNCTION NAMED_AS NAME func_params FUNC_BEGIN ;
+func_def : DEF FUNCTION NAMED_AS NAME func_params ;
 func_params : FUNC_PARAM func_param_packs ;
 func_param_packs : func_param_packs func_param_pack | func_param_pack ;
 func_param_pack : NUMBER type name_defs ;
 func_end : THIS_IS NAME FUNC_END ;
 type : TYPE_NUMBER | TYPE_STRING | TYPE_LIST ;
-name_defs : name_defs NAMED_AS NAME | NAMED_AS NAME ;
+name_defs : name_defs name_def | name_def ;
+name_def : NAMED_AS NAME ;
 if_sentence : if_statment sentences IF_END ;
 if_statment : IF_BEGIN logic_statement IF_STAT ;
-
+get_sentence : GET NAME ;
+index_sentence : GET value IT value;
 %%
  
 int main()
@@ -86,7 +93,7 @@ int main()
     yyparse();
     std::cout<<"\nAST:\n";
     root->printAll();
-    std::string js_code = root->codeGenerate();
+    std::string js_code = root->codeGenerate(0, 0);
     std::cout<<"code:"<<std::endl<<js_code<<std::endl;
     fwrite(js_code.c_str(), 1, js_code.size(), fout);
     return 0;
