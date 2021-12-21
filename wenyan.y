@@ -28,15 +28,17 @@ Node *p, *root;
 %token LOGIC_EQUAL LOGIC_LESS LOGIC_GREATER
 %token IF_BEGIN IF_END IF_STAT IF_ELSE
 %token GET IT
+%token EVAL
 
 %%
 file : sections {root = $$;};
 sections: section | sections section;
-section : function | sentence ;
-sentences : sentence | sentences sentence ;
+section : function | sentencei ;
+sentences : sentence | sentences sentencei ;
 sentence : control_sentence | print_sentence | do_it_sentence | function_sentence
          | loop_sentence | if_sentence | get_sentence
-         | index_sentence;
+         | index_sentence | eval_sentence;
+sentencei: sentence | assign_sentence;
 value : func_use | NAME | NUMBER ;
 valuei : IT | value;
 expression: valuei | logic_statement ;
@@ -52,7 +54,7 @@ loop_sentence : loop_statment sentences END ;
 loop_statment : while_true_loop | do_times_loop;
 while_true_loop : WHILE_TRUE ;
 do_times_loop : DO value TIMES ;
-param : NAME | NUMBER ;
+param : NAME | NUMBER | IT;
 params : params USE_TO param | USE_TO param ;
 function : func_def sentences func_end ;
 func_def : DEF FUNCTION NAMED_AS NAME func_params ;
@@ -67,6 +69,8 @@ if_sentence : if_statment sentences IF_END | if_statment sentences IF_END IF_ELS
 if_statment : IF_BEGIN logic_statement IF_STAT ;
 get_sentence : GET NAME ;
 index_sentence : GET value IT value;
+eval_sentence : EVAL expression;
+assign_sentence : NAMED_AS NAME;
 %%
  
 int main()

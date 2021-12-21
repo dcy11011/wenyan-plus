@@ -150,8 +150,8 @@ std::string Node::codeGenerate(int indent, int indented) {
         ret_str += indent_str + "return " + child(1)->codeGenerate(indent, 1) + ";\n";
     }
     else if(m_name == "function_sentence"){
-        ret_str += indent_str + "var " + getTempVariableName(1) + " = ";
         for(auto i : m_child_list) ret_str += i->codeGenerate(indent, 1);
+        ret_str = indent_str + "var " + getTempVariableName() + " = " + ret_str;
         ret_str += ";\n";
     }
     else if(m_name == "func_use"){
@@ -210,6 +210,9 @@ std::string Node::codeGenerate(int indent, int indented) {
     else if(m_name == "NAME"){
         ret_str += indent_str + _convert_name(m_str);
     }
+    else if(m_name == "IT"){
+        ret_str += indent_str + getTempVariableName(1);
+    }
     else if(m_name == "LOGIC_EQUAL"){
         ret_str += indent_str + " == ";
     }
@@ -235,6 +238,14 @@ std::string Node::codeGenerate(int indent, int indented) {
     }
     else if(m_name == "IF_ELSE"){
         ret_str = indent_str +  "else\n" + indent_str + "{\n";
+    }
+    else if(m_name == "eval_sentence"){
+        ret_str += child(findChildIndexByTokenName("expression"))->codeGenerate(indent, 1) + ";\n";
+        ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
+    }
+    else if(m_name == "assign_sentence"){
+        std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
+        ret_str += indent_str + name + " = " + getTempVariableName(1) + ";\n";
     }
     else{
         if (m_parent && m_parent->m_name == "if_statment") indented = 1;

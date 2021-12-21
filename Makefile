@@ -22,7 +22,7 @@ $(LEXC): $(LEX)
 $(YACCC): $(LEXC) $(YACCX)
 	bison -d -W $(YACCX)
 
-$(YACCX): $(YACC) parseyy.cpp
+$(YACCX): $(YACC) parseyy.cpp parse.config
 	g++ -std=c++11 parseyy.cpp -o parseyy
 	./parseyy $(YACC) $(YACCX)
 	rm parseyy

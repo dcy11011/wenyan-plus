@@ -85,6 +85,7 @@ end_if          {yylval = new Node(IF_END, readtoken(yytext)); return IF_END;}
 else            {yylval = new Node(IF_ELSE, readtoken(yytext)); return IF_ELSE;}
 get             {yylval = new Node(GET, readtoken(yytext)); return GET;}
 it              {yylval = new Node(IT, readtoken(yytext)); return IT;}
+eval            {yylval = new Node(EVAL, readtoken(yytext)); return EVAL;}
 %%
 
 int yywrap() 
