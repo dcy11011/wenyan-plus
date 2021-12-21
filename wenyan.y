@@ -11,6 +11,7 @@
 int yyerror(const std::string &msg)
 {
     wyLog(log_error)<<msg<<" "<<yytext;
+    return 1;
 }
 extern std::string token_name[2048];
 
@@ -28,23 +29,26 @@ Node *p, *root;
 %token IF_BEGIN IF_END IF_STAT
 
 %%
-file : file section{root = $$;} | section {};
-section : function | sentences ;
+file : sections {root = $$;};
+sections: section | sections section;
+section : function | sentence ;
 sentences : sentence | sentences sentence ;
 sentence : control_sentence | print_sentence | function_sentence | loop_sentence | if_sentence;
-value : func_use | NAME | NUMBER | logic_statement;
-logic_statement : value logic_operator value ;
+value : func_use | NAME | NUMBER ;
+expression: value | logic_statement ;
+logic_statement : value logic_operator expression ;
 logic_operator : LOGIC_EQUAL | LOGIC_LESS | LOGIC_GREATER ;
-func_use : USE_FUNC NAME USE_TO params ;
+func_use : USE_FUNC NAME params ;
 control_sentence : return_sentence | BREAK ;
 return_sentence : RETURN NAME | RETURN NUMBER;
-print_sentence : value PRINT_IT | PRINT value;
+print_sentence : expression PRINT_IT | PRINT expression;
 function_sentence : func_use;
 loop_sentence : loop_statment sentences END ;
 loop_statment : while_true_loop | do_times_loop;
 while_true_loop : WHILE_TRUE ;
-do_times_loop : DO NAME TIMES | DO value TIMES ;
-params : params NAME | params NUMBER | NAME | NUMBER ;
+do_times_loop : DO value TIMES ;
+param : NAME | NUMBER ;
+params : params USE_TO param | USE_TO param ;
 function : func_def sentences func_end ;
 func_def : DEF FUNCTION NAMED_AS NAME func_params FUNC_BEGIN ;
 func_params : FUNC_PARAM func_param_packs ;

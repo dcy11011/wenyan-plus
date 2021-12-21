@@ -144,14 +144,16 @@ std::string Node::codeGenerate(){
             ret_str += params->codeGenerate();
         }
     }
-    else if(m_name == "params"){
+    else if(m_name == "USE_TO"){
+    }
+    else if(m_name == "param"){
         for(auto i : m_child_list) ret_str += "(" + i->codeGenerate() + ")";
     }
     else if(m_name == "print_sentence"){
         if(m_child_list.size()){
             ret_str = "console.log(";
             std::string temp_str = "";
-            for(auto i : m_child_list) if(i->name()=="value"){
+            for(auto i : m_child_list) if(i->name()=="value"||i->name()=="expression"){
                 temp_str += i->codeGenerate();
                 temp_str.push_back(',');
             }

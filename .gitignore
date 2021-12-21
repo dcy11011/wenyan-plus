@@ -4,3 +4,7 @@
 *.tab.h
 *.yy.c
 *.yy.h
+*.x.y
+wenyan
+test.js
+.vscode

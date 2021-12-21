@@ -20,6 +20,6 @@ int main(int argc, char** argv){
         fscanf(fin,"%s", buf);
 
     }
-    fprintf(fout, "}\n");
+    fprintf(fout, "return 0;\n}\n");
     fprintf(fout, "std::string getTokenName(int tok){return token_name[tok];}\n");
 }

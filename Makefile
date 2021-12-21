@@ -13,21 +13,21 @@ YACCH = wenyan.x.tab.h
 TOKENCPP = token.cpp
 all: wenyan
 
-wenyan: $(YACCC) $(TOKENCPP)
+wenyan: $(YACCC) $(TOKENCPP) $(CPP)
 	g++ -std=c++11 $(YACCC) $(CPP)  -o   $(EXE)
 
 $(LEXC): $(LEX)
 	flex  $(LEX)
 
 $(YACCC): $(LEXC) $(YACCX)
-	bison -d $(YACCX)
+	bison -d -W $(YACCX)
 
-$(YACCX): 
+$(YACCX): $(YACC) parseyy.cpp
 	g++ -std=c++11 parseyy.cpp -o parseyy
 	./parseyy $(YACC) $(YACCX)
 	rm parseyy
 
-$(TOKENCPP): $(YACCC)
+$(TOKENCPP): $(YACCC) parsetoken.cpp
 	g++ parsetoken.cpp -o parsetoken
 	./parsetoken $(YACCH)
 	rm parsetoken

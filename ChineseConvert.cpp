@@ -138,6 +138,7 @@ bool ChineseConverter::loadConfig(const char *file_name){
         else if(stat == token_oringin)
             oringin_tok_buf.push_back(c);
     }
+    return true;
 }
 
 std::string ChineseConverter::convertString(const std::string &str){
