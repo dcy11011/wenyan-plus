@@ -82,6 +82,7 @@ break           {yylval = new Node(BREAK, readtoken(yytext)); return BREAK;}
 if              {yylval = new Node(IF_BEGIN, readtoken(yytext)); return IF_BEGIN;}
 end_stat        {yylval = new Node(IF_STAT, readtoken(yytext)); return IF_STAT;}
 end_if          {yylval = new Node(IF_END, readtoken(yytext)); return IF_END;}
+else            {yylval = new Node(IF_ELSE, readtoken(yytext)); return IF_ELSE;}
 get             {yylval = new Node(GET, readtoken(yytext)); return GET;}
 it              {yylval = new Node(IT, readtoken(yytext)); return IT;}
 %%

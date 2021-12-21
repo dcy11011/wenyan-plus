@@ -211,32 +211,33 @@ std::string Node::codeGenerate(int indent, int indented) {
         ret_str += indent_str + _convert_name(m_str);
     }
     else if(m_name == "LOGIC_EQUAL"){
-        ret_str += indent_str + "==";
+        ret_str += indent_str + " == ";
     }
     else if(m_name == "LOGIC_LESS"){
-        ret_str += indent_str + "<";
+        ret_str += indent_str + " < ";
     }
     else if(m_name == "LOGIC_GREATER"){
-        ret_str += indent_str + ">";
-    }
-    else if(m_name == "if_sentence"){
-        ret_str += indent_str + child(findChildIndexByTokenName("if_statment"))->codeGenerate(indent, 1);
-        ret_str += indent_str + "{\n";
-        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate(indent, 0);
-        ret_str += indent_str + "}\n";
+        ret_str += indent_str + " > ";
     }
     else if(m_name == "IF_BEGIN"){
-        //
         ret_str += indent_str + "if (";
     }
     else if(m_name == "IF_STAT"){
-        ret_str += indent_str + ")\n";
+        // ret_str += indent_str + ")\n";
+        ret_str += ")\n" + indent_str + "{\n";
     }
     else if (m_name == "sentences") {
         if (m_parent && m_parent->m_name != m_name) indent++;
         for(auto i : m_child_list) ret_str += i->codeGenerate(indent, 0);
     }
+    else if(m_name == "IF_END"){
+        ret_str = indent_str + "}\n";
+    }
+    else if(m_name == "IF_ELSE"){
+        ret_str = indent_str +  "else\n" + indent_str + "{\n";
+    }
     else{
+        if (m_parent && m_parent->m_name == "if_statment") indented = 1;
         for(auto i : m_child_list) ret_str += i->codeGenerate(indent, indented);
         // ret_str = "<" + m_name + ret_str + ">";
     }
