@@ -134,8 +134,7 @@ std::string Node::codeGenerate(){
         ret_str = "};\n";
     }
     else if(m_name == "return_sentence"){
-        std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
-        ret_str = "return "+name+";\n";
+        ret_str = "return "+child(1)->codeGenerate()+";\n";
     }
     else if(m_name == "func_use"){
         std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
@@ -196,18 +195,24 @@ std::string Node::codeGenerate(){
     else if(m_name == "LOGIC_GREATER"){
         ret_str = ">";
     }
-    else if(m_name == "if_sentence"){
-        ret_str =  child(findChildIndexByTokenName("if_statment"))->codeGenerate();
-        ret_str += "{\n";
-        ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate();
-        ret_str += "}\n";
-    }
+    // else if(m_name == "if_sentence"){
+    //     ret_str =  child(findChildIndexByTokenName("if_statment"))->codeGenerate();
+    //     ret_str += "\n{\n";
+    //     ret_str += child(findChildIndexByTokenName("sentences"))->codeGenerate();
+    //     ret_str += "\n}\n";
+    // }
     else if(m_name == "IF_BEGIN"){
         //
         ret_str = "if (";
     }
     else if(m_name == "IF_STAT"){
-        ret_str = ")\n";
+        ret_str = ")\n{\n";
+    }
+    else if(m_name == "IF_END"){
+        ret_str = "}\n";
+    }
+    else if(m_name == "IF_ELSE"){
+        ret_str = "else\n{\n";
     }
     else{
         for(auto i : m_child_list) ret_str += i->codeGenerate();

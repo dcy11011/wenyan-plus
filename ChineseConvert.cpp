@@ -98,7 +98,7 @@ ChineseConverter::~ChineseConverter(){
 bool ChineseConverter::loadConfig(const char *file_name){
     FILE* conf_file;
     if((conf_file = fopen(file_name,"r"))==NULL){
-        wyLog(log_error, "Can't open chinese parse config");
+        wyLog(log_error, "Can't open Chinese parse config");
         return false;
     }
     char c = EOF;
@@ -113,7 +113,7 @@ bool ChineseConverter::loadConfig(const char *file_name){
                 tok_buf.push_back(0);
                 oringin_tok_buf.push_back(0);
                 if(!trie.build((char*)oringin_tok_buf.data(), (char*)tok_buf.data())){
-                    wyLog(log_warning, "chinese parsing file containing confilicting rules");
+                    wyLog(log_warning)<<"Chinese parsing file containing confilicting rules "<<((char*)oringin_tok_buf.data())<<std::endl;
                 }
             }
             oringin_tok_buf.clear();

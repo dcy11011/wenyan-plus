@@ -10,7 +10,7 @@
 
 int yyerror(const std::string &msg)
 {
-    wyLog(log_error)<<msg;
+    wyLog(log_error)<<msg<<" "<<yytext;
 }
 extern std::string token_name[2048];
 
@@ -25,7 +25,7 @@ Node *p, *root;
 %token PRINT_IT PRINT
 %token WHILE_TRUE DO TIMES END BREAK
 %token LOGIC_EQUAL LOGIC_LESS LOGIC_GREATER
-%token IF_BEGIN IF_END IF_STAT
+%token IF_BEGIN IF_END IF_STAT IF_ELSE
 
 %%
 file : file section{root = $$;} | section {};
@@ -37,7 +37,7 @@ logic_statement : value logic_operator value ;
 logic_operator : LOGIC_EQUAL | LOGIC_LESS | LOGIC_GREATER ;
 func_use : USE_FUNC NAME USE_TO params ;
 control_sentence : return_sentence | BREAK ;
-return_sentence : RETURN NAME ;
+return_sentence : RETURN NAME | RETURN NUMBER;
 print_sentence : value PRINT_IT | PRINT value;
 function_sentence : func_use;
 loop_sentence : loop_statment sentences END ;
@@ -53,7 +53,7 @@ func_param_pack : NUMBER type name_defs ;
 func_end : THIS_IS NAME FUNC_END ;
 type : TYPE_NUMBER | TYPE_STRING | TYPE_LIST ;
 name_defs : name_defs NAMED_AS NAME | NAMED_AS NAME ;
-if_sentence : if_statment sentences IF_END ;
+if_sentence : if_statment sentences IF_END | if_statment sentences IF_END IF_ELSE sentences IF_END;
 if_statment : IF_BEGIN logic_statement IF_STAT ;
 
 %%
