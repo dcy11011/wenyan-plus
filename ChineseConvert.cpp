@@ -53,7 +53,7 @@ bool Trie::build(const string &pattern, const string &end_string){
     p->is_end = true;
     if (isdigit(end_string.at(0)) ||
         end_string == "s" || end_string == "b" || end_string == "k" ||
-        end_string == "w" || end_string == "k" )
+        end_string == "w" || end_string == "k" || end_string == "\"")
         p->end_value = end_string;
     else
         p->end_value = std::string(" ") + end_string + " ";

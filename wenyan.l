@@ -65,7 +65,6 @@ use_to          {yylval = new Node(USE_TO, readtoken(yytext));return USE_TO;}
 this_is         {yylval = new Node(THIS_IS, readtoken(yytext));return THIS_IS;}
 def             {yylval = new Node(DEF, readtoken(yytext));return DEF;}
 named_as        {yylval = new Node(NAMED_AS, readtoken(yytext));return NAMED_AS;}
-list            {yylval = new Node(TYPE_LIST, readtoken(yytext));return TYPE_LIST;}
 number          {yylval = new Node(TYPE_NUMBER, readtoken(yytext));return TYPE_NUMBER;}
 string          {yylval = new Node(TYPE_STRING, readtoken(yytext));return TYPE_STRING;}
 print_it        {yylval = new Node(PRINT_IT, readtoken(yytext));return PRINT_IT;}
@@ -94,6 +93,15 @@ it              {yylval = new Node(IT, readtoken(yytext)); return IT;}
 eval            {yylval = new Node(EVAL, readtoken(yytext)); return EVAL;}
 floor_it        {yylval = new Node(FLOOR_IT, readtoken(yytext));return FLOOR_IT;}
 round_it        {yylval = new Node(ROUND_IT, readtoken(yytext));return ROUND_IT;}
+list_concat     {yylval = new Node(LIST_CONCAT, readtoken(yytext));return LIST_CONCAT;}
+list_slice      {yylval = new Node(LIST_SLICE, readtoken(yytext));return LIST_SLICE;}
+list            {yylval = new Node(LIST_E, readtoken(yytext));return LIST_E;}
+with            {yylval = new Node(WITH, readtoken(yytext));return WITH;}
+to              {yylval = new Node(TO, readtoken(yytext));return TO;}
+inf             {yylval = new Node(INF, readtoken(yytext));return INF;}
+forin           {yylval = new Node(FORIN, readtoken(yytext));return FORIN;}
+contains        {yylval = new Node(CONTAINS, readtoken(yytext));return CONTAINS;}
+length          {yylval = new Node(LENGTH, readtoken(yytext));return LENGTH;}
 %%
 
 int yywrap() 

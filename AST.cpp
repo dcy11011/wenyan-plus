@@ -195,7 +195,12 @@ std::string Node::codeGenerate(int indent, int indented) {
     else if(m_name == "do_times_loop"){
         auto loop_times = getTempVariableName(), loop_temp = getTempVariableName();
         ret_str += indent_str + "var " + loop_times + " = " + child(1)->codeGenerate(indent, 1) + ";\n";// child[1] is loop time (value or NAME or ...)
-        ret_str += indent_str + "for(var " + loop_temp + " = 0; " + loop_temp + " < " + loop_times + "; " + loop_temp + "++)";
+        ret_str += indent_str + "for(var " + loop_temp + " = 0; " + loop_temp + " < " + loop_times + "; " + loop_temp + "++)\n";
+    }
+    else if(m_name == "for_in_loop"){
+        std::string loop_temp = child(findChildIndexByTokenName("NAME"))->codeGenerate(indent, 1);
+        std::string loop_range = child(findChildIndexByTokenName("expression_0"))->codeGenerate(indent, 1);
+        ret_str += indent_str + "for(var " + loop_temp + " of " + loop_range + ")\n";
     }
     else if(m_name == "WHILE_TRUE"){
         ret_str += indent_str + "while(true)";
@@ -212,6 +217,9 @@ std::string Node::codeGenerate(int indent, int indented) {
     }
     else if(m_name == "IT"){
         ret_str += indent_str + getTempVariableName(1);
+    }
+    else if(m_name == "INF"){
+        ret_str += indent_str + "Infinity";
     }
     else if(m_name == "LOGIC_EQUAL"){
         ret_str += indent_str + " == ";
@@ -245,6 +253,32 @@ std::string Node::codeGenerate(int indent, int indented) {
         ret_str = "Math.floor(" + getTempVariableName(1) + ");\n";
         ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
     }
+    else if(m_name == "LIST_E"){
+        if (!m_parent || m_parent->m_name != "type")
+            ret_str += indent_str + "[]";
+    }
+    else if(m_name == "concat_sentence"){
+        int x1 = findChildIndexByTokenName("valueref");
+        int x2 = findChildIndexByTokenName("expression_0", x1 + 1);
+        std::string s1 = child(x1)->codeGenerate(indent, 1);
+        std::string s2 = child(x2)->codeGenerate(indent, 1);
+        ret_str = indent_str + "var " + getTempVariableName() + " = (" + s1 + " = Array.from(" + s1 + ").concat(" + s2 + "));\n";
+    }
+    else if(m_name == "slice_sentence"){
+        int x1 = findChildIndexByTokenName("value");
+        int x2 = findChildIndexByTokenName("value", x1 + 1);
+        std::string s1 = child(x1)->codeGenerate(indent, 1) + "-1";
+        std::string s2 = child(x2)->codeGenerate(indent, 1);
+        ret_str = getTempVariableName(1);
+        ret_str = indent_str + "var " + getTempVariableName() + " = " + ret_str + ".slice(" + s1 + ", " + s2 + ");\n";
+    }
+    else if(m_name == "index_sentence"){
+        int x1 = findChildIndexByTokenName("expression_0");
+        int x2 = findChildIndexByTokenName("value", x1 + 1);
+        std::string s1 = child(x1)->codeGenerate(indent, 1);
+        std::string s2 = child(x2)->codeGenerate(indent, 1) + "-1";
+        ret_str = indent_str + "var " + getTempVariableName() + " = " + s1 + "[" + s2 + "];\n";
+    }
     else if(m_name == "IF_BEGIN"){
         ret_str += indent_str + "if (";
     }
@@ -256,7 +290,7 @@ std::string Node::codeGenerate(int indent, int indented) {
         if (m_parent && m_parent->m_name != m_name) indent++;
         for(auto i : m_child_list) ret_str += i->codeGenerate(indent, 0);
     }
-    else if(m_name == "IF_END"){
+    else if(m_name == "IF_END" || m_name == "END"){
         ret_str = indent_str + "}\n";
     }
     else if(m_name == "IF_ELSE"){
@@ -265,6 +299,14 @@ std::string Node::codeGenerate(int indent, int indented) {
     else if(m_name == "eval_sentence"){
         ret_str += child(findChildIndexByTokenName("expression_0"))->codeGenerate(indent, 1) + ";\n";
         ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
+    }
+    else if(m_name == "expression_3"){
+        int x = findChildIndexByTokenName("single_operator");
+        ret_str = child(findChildIndexByTokenName("valuei"))->codeGenerate(indent, 1);
+        if (x != -1) {
+            if (child(x)->findChildIndexByTokenName("LENGTH") != -1)
+                ret_str = "(" + ret_str + ").length";
+        }
     }
     else if(m_name == "assign_sentence"){
         std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
