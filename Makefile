@@ -1,4 +1,9 @@
 # for linux
+
+WY_PROG = test.wy
+JS_PROG = $(WY_PROG:.wy=.js)
+
+
 EXE = wenyan
 CPP = ChineseConvert.cpp ErrorLog.cpp AST.cpp token.cpp
 
@@ -12,6 +17,12 @@ YACCH = wenyan.x.tab.h
 
 TOKENCPP = token.cpp
 all: wenyan
+
+run: $(JS_PROG)
+	nodejs ./test.js
+
+$(JS_PROG): wenyan $(WY_PROG)
+	./wenyan 
 
 wenyan: $(YACCC) $(TOKENCPP) $(CPP)
 	g++ -std=c++11 $(YACCC) $(CPP) -o $(EXE) -g
@@ -34,3 +45,5 @@ $(TOKENCPP): $(YACCC) parsetoken.cpp
 
 clean:
 	rm $(EXE) $(YACCX) $(YACCC) $(YACCH) $(LEXC) $(TOKENCPP)
+
+.PHONY: clean run all
