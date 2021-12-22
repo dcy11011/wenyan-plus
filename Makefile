@@ -1,6 +1,6 @@
 # for linux
 
-WY_PROG = test.wy
+WY_PROG = test.wy $(wildcard Examples/*.wy)
 JS_PROG = $(WY_PROG:.wy=.js)
 
 
@@ -16,13 +16,22 @@ YACCC = wenyan.x.tab.c
 YACCH = wenyan.x.tab.h
 
 TOKENCPP = token.cpp
-all: wenyan
+
+all: examples wenyan
+	@echo "Usage: "
+	@echo "Compile & Build  | make "
+	@echo "Compile Examples | make examples"
+	@echo "Build Compiler   | make wenyan"
+	@echo "Run JS Programs  | nodejs ./<filename>.js"
+	@echo "Run test.js      | make run"
+
+examples: $(JS_PROG)
 
 run: $(JS_PROG)
 	nodejs ./test.js
 
-$(JS_PROG): wenyan $(WY_PROG)
-	./wenyan 
+%.js: %.wy wenyan 
+	./wenyan $<
 
 wenyan: $(YACCC) $(TOKENCPP) $(CPP)
 	g++ -std=c++11 $(YACCC) $(CPP) -o $(EXE) -g
@@ -44,6 +53,6 @@ $(TOKENCPP): $(YACCC) parsetoken.cpp
 	rm parsetoken
 
 clean:
-	rm $(EXE) $(YACCX) $(YACCC) $(YACCH) $(LEXC) $(TOKENCPP)
+	rm $(EXE) $(YACCX) $(YACCC) $(YACCH) $(LEXC) $(TOKENCPP) $(JS_PROG)
 
 .PHONY: clean run all

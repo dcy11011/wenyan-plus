@@ -65,7 +65,7 @@ loop_statment : while_true_loop | do_times_loop | for_in_loop;
 while_true_loop : WHILE_TRUE ;
 do_times_loop : DO value TIMES ;
 for_in_loop : FORIN expression_0 CONTAINS NAME IF_STAT;
-param : NAME | NUMBER | IT;
+param : NAME | NUMBER | IT | CSTRING;
 params : params USE_TO param | USE_TO param ;
 function : func_def sentences func_end ;
 func_def : DEF FUNCTION DEFNAMED_AS NAME func_params ;
@@ -88,14 +88,25 @@ slice_sentence : LIST_SLICE value TO value;
 comment_sentence : CSTRING; 
 %%
  
-int main()
+int main(int argc, char **argv)
 {
+    if (argc < 2)
+    {
+        puts("Usage: ./wenyan <target>.wy");
+        return 0;
+    }
+    std::string fn = argv[1];
+    if (fn.size() < 3)
+    {
+        printf("Filename '%s' not valid\n", fn.c_str());
+        return 1;
+    }
     init_token();
     extern FILE* yyin;
     ChineseConverter chinese_converter;
     chinese_converter.loadConfig("parse.config");
-    FILE *fin = fopen("test.wy","r");
-    FILE *fout= fopen("test.js","w");
+    FILE *fin = fopen(fn.c_str(),"r");
+    FILE *fout= fopen((fn.substr(0, fn.size() - 3) + ".js").c_str(),"w");
     char c;
     std::vector<char> str;
     while((c=fgetc(fin))!=EOF){
