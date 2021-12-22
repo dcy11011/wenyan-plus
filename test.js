@@ -1,3 +1,5 @@
+/* 我有一个大西瓜 */
+console.log("我有一个大西瓜");
 var temp_1 = [];
 name_0 = temp_1;
 var temp_2 = (temp_1 = Array.from(temp_1).concat(1));

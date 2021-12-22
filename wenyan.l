@@ -53,6 +53,7 @@ long long parseNumberString(const std::string &str){
 
 %%
 [0-9bskwy]+(\.[0-9]+)? {yylval = new Node(NUMBER, readtoken(yytext)); yylval->setVal(parseNumberString(yytext)); return NUMBER;}
+\".*\"            {yylval = new Node(CSTRING, readtoken(yytext)); yylval->setStr(yytext); return CSTRING;}
 $name_[0-9]*    {yylval = new Node(NAME, readtoken(yytext)); yylval->setStr(yytext); return NAME;}
 function        {yylval = new Node(FUNCTION, readtoken(yytext));return FUNCTION;}
 func_begin      {yylval = new Node(FUNC_BEGIN, readtoken(yytext));return FUNC_BEGIN;}

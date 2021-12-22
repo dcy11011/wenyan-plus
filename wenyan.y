@@ -19,7 +19,7 @@ Node *p, *root;
 
 %}
 
-%token NUMBER NAME INF
+%token NUMBER NAME INF CSTRING
 %token FUNCTION  FUNC_BEGIN FUNC_END FUNC_PARAM USE_FUNC USE_TO RETURN RETURN_IT
 %token THIS_IS DEF NAMED_AS DEF_AS DEFNAMED_AS
 %token TYPE_NUMBER TYPE_STRING
@@ -41,8 +41,9 @@ sentence : control_sentence | print_sentence | do_it_sentence | function_sentenc
          | loop_sentence | if_sentence 
          | concat_sentence | slice_sentence 
          | index_sentence | eval_sentence | define_sentence;
+         | comment_sentence
 sentencei: sentence | assign_sentence;
-value : func_use | NAME | NUMBER | LIST_E | INF;
+value : func_use | NAME | NUMBER | LIST_E | INF | CSTRING;
 valuei : IT | value;
 valueref : IT | NAME;
 expression_3 : valuei | valuei single_operator ;
@@ -84,6 +85,7 @@ assign_sentence : NAMED_AS NAME;
 define_sentence : DEF_AS NAME IF_END | DEFNAMED_AS NAME;
 concat_sentence : LIST_CONCAT valueref WITH expression_0;
 slice_sentence : LIST_SLICE value TO value;
+comment_sentence : CSTRING; 
 %%
  
 int main()

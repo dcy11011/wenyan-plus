@@ -212,6 +212,13 @@ std::string Node::codeGenerate(int indent, int indented) {
         sprintf(buffer, "%lld", m_val);
         ret_str += indent_str + std::string(buffer);
     }
+    else if(m_name == "CSTRING"){
+        ret_str += indent_str + m_str;
+    }
+    else if(m_name == "comment_sentence"){
+        ret_str = child(0)->codeGenerate(indent, indented);
+        ret_str = indent_str + "/* " + ret_str.substr(1, ret_str.size() - 2) + " */\n";
+    }
     else if(m_name == "NAME"){
         ret_str += indent_str + _convert_name(m_str);
     }
