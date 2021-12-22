@@ -21,7 +21,7 @@ Node *p, *root;
 
 %token NUMBER NAME INF
 %token FUNCTION  FUNC_BEGIN FUNC_END FUNC_PARAM USE_FUNC USE_TO RETURN RETURN_IT
-%token THIS_IS DEF NAMED_AS
+%token THIS_IS DEF NAMED_AS DEF_AS DEFNAMED_AS
 %token TYPE_NUMBER TYPE_STRING
 %token PRINT_IT PRINT
 %token WHILE_TRUE DO TIMES END BREAK FORIN CONTAINS
@@ -40,7 +40,7 @@ sentences : sentence | sentences sentencei ;
 sentence : control_sentence | print_sentence | do_it_sentence | function_sentence
          | loop_sentence | if_sentence 
          | concat_sentence | slice_sentence 
-         | index_sentence | eval_sentence;
+         | index_sentence | eval_sentence | define_sentence;
 sentencei: sentence | assign_sentence;
 value : func_use | NAME | NUMBER | LIST_E | INF;
 valuei : IT | value;
@@ -56,7 +56,7 @@ ari_operator_1 : ARI_MUL | ARI_DIV | ARI_MOD ;
 func_use : USE_FUNC NAME params ;
 control_sentence : return_sentence | BREAK ;
 do_it_sentence : PRINT_IT | RETURN_IT | ROUND_IT | FLOOR_IT;
-return_sentence : RETURN NAME | RETURN NUMBER;
+return_sentence : RETURN expression_0;
 print_sentence : PRINT expression_0;
 function_sentence : func_use;
 loop_sentence : loop_statment sentences END ;
@@ -67,7 +67,7 @@ for_in_loop : FORIN expression_0 CONTAINS NAME IF_STAT;
 param : NAME | NUMBER | IT;
 params : params USE_TO param | USE_TO param ;
 function : func_def sentences func_end ;
-func_def : DEF FUNCTION NAMED_AS NAME func_params ;
+func_def : DEF FUNCTION DEFNAMED_AS NAME func_params ;
 func_params : FUNC_PARAM func_param_packs ;
 func_param_packs : func_param_packs func_param_pack | func_param_pack ;
 func_param_pack : NUMBER type name_defs ;
@@ -81,6 +81,7 @@ if_statment : IF_BEGIN expression_0 IF_STAT ;
 index_sentence : GET expression_0 IT value;
 eval_sentence : EVAL expression_0 | GET expression_0;
 assign_sentence : NAMED_AS NAME;
+define_sentence : DEF_AS NAME IF_END | DEFNAMED_AS NAME;
 concat_sentence : LIST_CONCAT valueref WITH expression_0;
 slice_sentence : LIST_SLICE value TO value;
 %%

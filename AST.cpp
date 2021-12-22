@@ -247,11 +247,11 @@ std::string Node::codeGenerate(int indent, int indented) {
     }
     else if(m_name == "ROUND_IT") {
         ret_str = "Math.round(" + getTempVariableName(1) + ");\n";
-        ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
+        ret_str = indent_str + "var " + getTempVariableName() + " = " + ret_str;
     }
     else if(m_name == "FLOOR_IT") {
         ret_str = "Math.floor(" + getTempVariableName(1) + ");\n";
-        ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
+        ret_str = indent_str + "var " + getTempVariableName() + " = " + ret_str;
     }
     else if(m_name == "LIST_E"){
         if (!m_parent || m_parent->m_name != "type")
@@ -298,7 +298,7 @@ std::string Node::codeGenerate(int indent, int indented) {
     }
     else if(m_name == "eval_sentence"){
         ret_str += child(findChildIndexByTokenName("expression_0"))->codeGenerate(indent, 1) + ";\n";
-        ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
+        ret_str = indent_str + "var " + getTempVariableName() + " = " + ret_str;
     }
     else if(m_name == "expression_3"){
         int x = findChildIndexByTokenName("single_operator");
@@ -311,6 +311,10 @@ std::string Node::codeGenerate(int indent, int indented) {
     else if(m_name == "assign_sentence"){
         std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
         ret_str += indent_str + name + " = " + getTempVariableName(1) + ";\n";
+    }
+    else if(m_name == "define_sentence"){
+        std::string name = _convert_name(child(findChildIndexByTokenName("NAME"))->str());
+        ret_str += indent_str + "var " + name + " = " + getTempVariableName(1) + ";\n";
     }
     else{
         if (m_parent && m_parent->m_name == "if_statment") indented = 1;
