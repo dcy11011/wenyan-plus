@@ -31,7 +31,7 @@ int main(int argc, char ** argv){
     int name_cur = 0;
     int brace = 0;
     while((c = fgetc(fin))!=EOF){
-        if(!stage&&isalpha(c)){
+        if(!stage&&isalnum(c)){
             name_cur = 0;
             stage = read_left;
         }
@@ -41,7 +41,7 @@ int main(int argc, char ** argv){
             cnt = 0;
         }
         else if(stage==read_right_token){
-            if(isspace(c)&&isalpha(last)) cnt++;
+            if(isspace(c)&&isalnum(last)) cnt++;
             if(c=='|'){
                 if(!isspace(last))cnt++;
                 is_end = 1;
@@ -67,7 +67,7 @@ int main(int argc, char ** argv){
             if(c==';'){
                 stage = none;
             }
-            if(isalpha(c)||c=='|')stage = read_right_token;
+            if(isalnum(c)||c=='|')stage = read_right_token;
         }
 
         

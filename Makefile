@@ -14,7 +14,7 @@ TOKENCPP = token.cpp
 all: wenyan
 
 wenyan: $(YACCC) $(TOKENCPP) $(CPP)
-	g++ -std=c++11 $(YACCC) $(CPP)  -o   $(EXE)
+	g++ -std=c++11 $(YACCC) $(CPP) -o $(EXE) -g
 
 $(LEXC): $(LEX)
 	flex  $(LEX)

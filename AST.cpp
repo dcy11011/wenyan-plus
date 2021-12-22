@@ -175,7 +175,7 @@ std::string Node::codeGenerate(int indent, int indented) {
             ret_str += indent_str + "console.log(";
             std::string temp_str = "";
             for(auto i : m_child_list)
-                if (i->name()=="value" || i->name()=="expression") {
+                if (i->name()=="value" || i->name()=="expression_0") {
                     temp_str += i->codeGenerate(indent, 1);
                     temp_str.push_back(',');
                 }
@@ -222,6 +222,29 @@ std::string Node::codeGenerate(int indent, int indented) {
     else if(m_name == "LOGIC_GREATER"){
         ret_str += indent_str + " > ";
     }
+    else if(m_name == "ARI_ADD"){
+        ret_str += indent_str + " + ";
+    }
+    else if(m_name == "ARI_SUB"){
+        ret_str += indent_str + " - ";
+    }
+    else if(m_name == "ARI_MUL"){
+        ret_str += indent_str + " * ";
+    }
+    else if(m_name == "ARI_DIV"){
+        ret_str += indent_str + " / ";
+    }
+    else if(m_name == "ARI_MOD"){
+        ret_str += indent_str + " % ";
+    }
+    else if(m_name == "ROUND_IT") {
+        ret_str = "Math.round(" + getTempVariableName(1) + ");\n";
+        ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
+    }
+    else if(m_name == "FLOOR_IT") {
+        ret_str = "Math.floor(" + getTempVariableName(1) + ");\n";
+        ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
+    }
     else if(m_name == "IF_BEGIN"){
         ret_str += indent_str + "if (";
     }
@@ -240,7 +263,7 @@ std::string Node::codeGenerate(int indent, int indented) {
         ret_str = indent_str +  "else\n" + indent_str + "{\n";
     }
     else if(m_name == "eval_sentence"){
-        ret_str += child(findChildIndexByTokenName("expression"))->codeGenerate(indent, 1) + ";\n";
+        ret_str += child(findChildIndexByTokenName("expression_0"))->codeGenerate(indent, 1) + ";\n";
         ret_str = indent_str + "let " + getTempVariableName() + " = " + ret_str;
     }
     else if(m_name == "assign_sentence"){

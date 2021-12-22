@@ -23,8 +23,9 @@ TextPosition readtoken(char* str){
 long long parseNumberString(const std::string &str){
 	std::stack<long long> sta;
 	for(auto i:str){
-      if(i=='0')continue;
-		if(isdigit(i))sta.push((int)(i-'0'));
+      if (isspace(i)) continue;
+      if (i=='0') continue;
+		if (isdigit(i)) sta.push((int)(i-'0'));
 		else if(i=='s'){
 			if(sta.empty()) sta.push(10);
 			else{
@@ -51,7 +52,7 @@ long long parseNumberString(const std::string &str){
 %}
 
 %%
-[0-9][0-9bskwy\s]*(.[0-9\s]+)? {yylval = new Node(NUMBER, readtoken(yytext)); yylval->setVal(parseNumberString(yytext)); return NUMBER;}
+[0-9bskwy]+(\.[0-9]+)? {yylval = new Node(NUMBER, readtoken(yytext)); yylval->setVal(parseNumberString(yytext)); return NUMBER;}
 $name_[0-9]*    {yylval = new Node(NAME, readtoken(yytext)); yylval->setStr(yytext); return NAME;}
 function        {yylval = new Node(FUNCTION, readtoken(yytext));return FUNCTION;}
 func_begin      {yylval = new Node(FUNC_BEGIN, readtoken(yytext));return FUNC_BEGIN;}
@@ -77,6 +78,11 @@ break           {yylval = new Node(BREAK, readtoken(yytext)); return BREAK;}
 ==              {yylval = new Node(LOGIC_EQUAL, readtoken(yytext)); return LOGIC_EQUAL;}
 \>              {yylval = new Node(LOGIC_GREATER, readtoken(yytext)); return LOGIC_GREATER;}
 \<              {yylval = new Node(LOGIC_LESS, readtoken(yytext)); return LOGIC_LESS;}
+\+              {yylval = new Node(ARI_ADD, readtoken(yytext)); return ARI_ADD;}
+-               {yylval = new Node(ARI_SUB, readtoken(yytext)); return ARI_SUB;}
+\*              {yylval = new Node(ARI_MUL, readtoken(yytext)); return ARI_MUL;}
+\/              {yylval = new Node(ARI_DIV, readtoken(yytext)); return ARI_DIV;}
+%               {yylval = new Node(ARI_MOD, readtoken(yytext)); return ARI_MOD;}
 \n              {n_line ++; n_char = 1;}
 .               {n_char += strlen(yytext);}
 if              {yylval = new Node(IF_BEGIN, readtoken(yytext)); return IF_BEGIN;}
@@ -86,6 +92,8 @@ else            {yylval = new Node(IF_ELSE, readtoken(yytext)); return IF_ELSE;}
 get             {yylval = new Node(GET, readtoken(yytext)); return GET;}
 it              {yylval = new Node(IT, readtoken(yytext)); return IT;}
 eval            {yylval = new Node(EVAL, readtoken(yytext)); return EVAL;}
+floor_it        {yylval = new Node(FLOOR_IT, readtoken(yytext));return FLOOR_IT;}
+round_it        {yylval = new Node(ROUND_IT, readtoken(yytext));return ROUND_IT;}
 %%
 
 int yywrap() 
