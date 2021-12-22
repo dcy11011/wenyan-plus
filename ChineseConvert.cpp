@@ -158,7 +158,6 @@ std::string ChineseConverter::convertString(const std::string &str){
     string s = str + std::string("$");// this '$' makes all buffer fall dismatch at last, so that after this loop all char in oringin string will be handled
     int depth = 0; // how many '(' unmatched now. this function ignore all string in "「 ... 」"
     for(int i=0;i<s.size();i++){
-        //cout<<"i="<<i<<" lastmatch="<<last_match<<" match_index="<<match_index<<" buf=";for(int i=0;i<buf.size();i++)printf("%02x ",(unsigned char)buf[i]);cout<<endl;
         if(i+2<s.size()&&(unsigned char)s[i]==0xe3&&(unsigned char)s[i+1]==0x80&&(unsigned char)s[i+2]==0x82){
             // ignore "。"
             i+=2;
@@ -175,23 +174,24 @@ std::string ChineseConverter::convertString(const std::string &str){
             }
             else{
                 // if there is mathc in buf, push the matched string and restart matching from last matched position
-                if(last_match == "(" || "\""){
-                    depth++;
+                if(!depth || last_match == "\"" || last_match == "("){
+                    output.insert(output.end(), last_match.begin(), last_match.end());
+                    i = match_index;    
                 }
-                if(last_match == ")" || "\""){
-                    depth--;
-                }
-                output.insert(output.end(), last_match.begin(), last_match.end());
+                else
+                    output.insert(output.end(), buf.begin(), buf.end());
                 buf.clear();
                 trie.beginWalk();
-                i = match_index;
                 match_index = -1;
             }
             continue;
         }
-        if( !depth && trie.isEnd() ){
+        if(trie.isEnd() ){
             match_index = i;
             last_match = trie.endString();
+            if(last_match == "(" || last_match ==  "\"" || last_match == ")"){
+                depth = !depth;
+            }
             continue;
         }
     }
